@@ -1,60 +1,47 @@
-# Template: Python - Minimal
+# Google Form Filler from Excel
 
-This template leverages the new [Python framework](https://github.com/robocorp/robocorp), the [libraries](https://github.com/robocorp/robocorp/blob/master/docs/README.md#python-libraries) from to same project as well.
+## Description
 
-The template provides you with the basic structure of a Python project: logging out of the box and controlling your tasks without fiddling with the base Python stuff. The environment contains the most used libraries, so you do not have to start thinking about those right away. 
+This Robocorp script automates the process of filling out a Google Form using data from an Excel file. The script reads the data from the Excel file, navigates to the Google Form URL, fills out the form fields based on the Excel data, submits the form, and clicks the "Submit another response" button to prepare for the next entry.
 
-👉 Other templates are available as well via our tooling and on our [Portal](https://robocorp.com/portal/tag/template)
+## Prerequisites
 
-## Running
+*   **Python 3.7+**
+*   **Robocorp Framework**: `pip install robocorp-framework`
+*   **Required Libraries**:
+    *   `rpaframework`
+    *   `rpaframework-browser`
+    *   `pandas`
+    *   `rpaframework-selenium`
+*   Install these libraries using `pip install -r requirements.txt`
+*   using the Vs-code extension install:
+*   ![Requirement Extension](https://github.com/stha-sanket/RPA-Auto-WebsiteScraper/blob/main/requirement-extension.png?raw=true)
+  
+## Usage
 
-#### VS Code
-1. Get [Robocorp Code](https://robocorp.com/docs/developer-tools/visual-studio-code/extension-features) -extension for VS Code.
-1. You'll get an easy-to-use side panel and powerful command-palette commands for running, debugging, code completion, docs, etc.
+1.  **Run the Robot:**
+ After downloading the extension you can see a Run Task above `@task` decorator
 
-#### Command line
+## Code Explanation
 
-1. [Get RCC](https://github.com/robocorp/rcc?tab=readme-ov-file#getting-started)
-1. Use the command: `rcc run`
+*   **Robocorp Framework:** Provides the structure for defining and running tasks.
+*   **Browser Library (Selenium):** Controls the web browser (Chrome) for navigating the Google Form and interacting with its elements. This implementation leverages the `Selenium` class from `RPA.Browser.Selenium` directly for browser interaction. This is necessary because interacting with some dynamic elements of the form requires more explicit Selenium functionality.
+*   **Pandas:** Reads the data from the `data.xlsx` Excel file into a Pandas DataFrame.
+*   **Data Iteration:** The script iterates through each row of the DataFrame, extracting the data for each form field.
+*   **Form Filling:** The script uses XPath expressions to locate the form fields on the Google Form and fills them with the corresponding data from the Excel file.
+*   **Form Submission:** The script clicks the "Submit" button to submit the form.
+*   **"Submit Another Response" Handling:** After submitting the form, the script waits for the "Submit another response" link to become visible and clicks it to prepare for the next entry.
+*   **Course Selection:** The script uses conditional statements to select a course from a group of radio buttons based on the value in the "Course Interested" column of the Excel file.
 
-## Results
+## Important Considerations
 
-🚀 After running the bot, check out the `log.html` under the `output` -folder.
-
-## Dependencies
-
-We strongly recommend getting familiar with adding your dependencies in [conda.yaml](conda.yaml) to control your Python dependencies and the whole Python environment for your automation.
-
-<details>
-  <summary>🙋‍♂️ "Why not just pip install...?"</summary>
-
-Think of [conda.yaml](conda.yaml) as an equivalent of the requirements.txt, but much better. 👩‍💻 With `conda.yaml`, you are not just controlling your PyPI dependencies; you control the complete Python environment, which makes things repeatable and easy.
-
-👉 You will probably need to run your code on another machine quite soon, so by using `conda.yaml`:
-- You can avoid `Works on my machine` -cases
-- You do not need to manage Python installations on all the machines
-- You can control exactly which version of Python your automation will run on 
-  - You'll also control the pip version to avoid dep. resolution changes
-- No need for venv, pyenv, ... tooling and knowledge sharing inside your team.
-- Define dependencies in conda.yaml, let our tooling do the heavy lifting.
-- You get all the content of [conda-forge](https://prefix.dev/channels/conda-forge) without any extra tooling
-
-> Dive deeper with [these](https://github.com/robocorp/rcc/blob/master/docs/recipes.md#what-is-in-condayaml) resources.
-
-</details>
-<br/>
-
-> The full power of [rpaframework](https://robocorp.com/docs/python/rpa-framework) -libraries is also available on Python as a backup while we implement the new Python libraries.
-
-## What now?
-
-🚀 Now, go get'em
-
-Start writing Python and remember that the AI/LLM's out there are getting really good and creating Python code specifically.
-
-👉 Try out [Robocorp ReMark 💬](https://chat.robocorp.com)
-
-For more information, do not forget to check out the following:
-- [Robocorp Documentation -site](https://robocorp.com/docs)
-- [Portal for more examples](https://robocorp.com/portal)
-- Follow our main [robocorp -repository](https://github.com/robocorp/robocorp) as it is the main location where we developed the libraries and the framework.
+*   **Google Form's HTML Structure:** The script relies heavily on XPath expressions to locate form elements. Changes to the Google Form's layout or element IDs will likely break the script. You'll need to update the XPath expressions in the script if the Google Form's HTML changes. Use your browser's developer tools to inspect the HTML and find the appropriate XPath expressions.
+*   **XPath Fragility:** The script utilizes very specific XPaths to locate elements. It's **strongly recommended** to find more robust and stable locators whenever possible. Consider using element IDs, names, or CSS selectors. XPath locators are often prone to breaking due to minor changes in the Google Forms HTML structure.
+*   **Hardcoded URL:** The Google Form URL (`https://forms.gle/qMFvYEouXZFPCtDB7`) is hardcoded in the script. Consider making this configurable, either by using a configuration file or a command-line argument.
+*   **Dynamic Form Elements:** Google Forms can dynamically change its HTML structure, making it difficult to scrape consistently. Be prepared to update the XPath locators frequently.
+*   **Error Handling:** The script includes minimal error handling. You should add more robust error handling to catch potential exceptions, such as network errors, invalid data in the Excel file, or changes to the Google Form's HTML structure.
+*   **Excel File Structure:** The script assumes that the `data.xlsx` file has the correct column headers. Ensure that the column names in the Excel file match the expected names in the script.
+*   **`slowmo`**: The line `browser.configure(slowmo=50)` adds a small delay (50 milliseconds) after each browser action. This can make the script easier to debug, but slows down the overall execution. Remove or reduce the `slowmo` value to make the script run faster.
+*   **Rate Limiting:** Google Forms may have rate limits. If you are submitting a large number of forms, you may need to add delays between submissions to avoid being blocked.
+*   **Selenium Library**:  The script uses the Selenium library via the Selenium class provided by `RPA.Browser.Selenium`. This gives you more fine-grained control over browser interactions, particularly for more complex form elements that might not work seamlessly with Robocorp's default browser library. It's initialized via `browser_lib = Selenium()` and then used in the script. The use of the Selenium Library requires chromedriver.exe to be present in the PATH environment variable.
+*   **Data Types:** Explicitly cast datatypes from excel to the appropriate datatype on the Google form
